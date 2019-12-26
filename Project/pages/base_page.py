@@ -5,6 +5,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
 from .locators import BasePageLocators
+from selenium.webdriver.common.by import By
+from selenium.common.exceptions import StaleElementReferenceException
 
 class BasePage():
     def __init__(self, browser, url):
@@ -54,3 +56,18 @@ class BasePage():
         button_exit = self.browser.find_element(*BasePageLocators.BUTTON_EXIT)
         assert button_exit, "You not autorisation"
         time.sleep(3)
+
+    def guest_read_all_first_news(self):
+        for i in range(12):
+            try:
+                first_window = self.browser.window_handles[0]
+                click_news = self.browser.find_element(By.CSS_SELECTOR, f".news.news_x-xs div:nth-child({i + 1}) a").click()
+                time.sleep(1)
+                new_window = self.browser.window_handles[1]
+                assert new_window, "New window dont open"
+
+                self.browser.switch_to.window(new_window)
+                self.browser.close()
+                self.browser.switch_to.window(first_window)
+            except StaleElementReferenceException:
+                continue

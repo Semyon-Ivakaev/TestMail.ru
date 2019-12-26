@@ -33,3 +33,8 @@ class TestGuest:
         page.guest_read_region_news()
 
 
+    def test_guest_read_all(self, browser):
+        link = 'https://mail.ru/'
+        page = MainPage(browser, link)
+        page.open()
+        page.guest_read_all_first_news()
